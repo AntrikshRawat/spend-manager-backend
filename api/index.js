@@ -30,4 +30,4 @@ app.use("/account",account);
 app.use("/payment",payment);
 
 
-module.exports.handler = serverless(app);
+module.exports = serverless(app);
