@@ -21,9 +21,9 @@ app.use(express.urlencoded({ extended: true })); // For parsing application
 app.use(express.json());
 app.use(cookieParser());
 
-app.get('/', (req, res) => {
- res.send('Welcome to spend manager api!');
-});
+app.get("/",(req,res)=>{
+  res.send("hello and welcome to spend-manager-api!")
+})
 
 app.use("/auth/v1",auth);
 app.use("/account",account);
