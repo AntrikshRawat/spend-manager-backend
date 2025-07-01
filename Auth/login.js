@@ -30,9 +30,9 @@ Router.post("/", async (req, res) => {
       return res.status(401).json({ status: false, message: "Incorrect Credentials" });
     }
 
-    const token = jwt.sign({ id: user._id }, secret);
+    const authToken = jwt.sign({ id: user._id }, secret);
 
-    res.cookie("authToken", token, {
+    res.cookie("authToken", authToken, {
       httpOnly: true,
       sameSite: 'none',     
       secure: true,        
