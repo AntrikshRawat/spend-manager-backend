@@ -19,28 +19,28 @@ app.use(cookieParser());
 
 let isDBConnected = false;
 
-app.use(async (req, res, next) => {
-  try {
-    if (!isDBConnected) {
-      await connectToDB();
-      isDBConnected = true;
-      console.log("✅ MongoDB Connected!");
-    }
-    next(); // ✅ CRITICAL!
-  } catch (err) {
-    console.error("❌ MongoDB connection error:", err);
-    return res.status(500).json({ message: "DB connection failed" });
-  }
-});
+// app.use(async (req, res, next) => {
+//   try {
+//     if (!isDBConnected) {
+//       await connectToDB();
+//       isDBConnected = true;
+//       console.log("✅ MongoDB Connected!");
+//     }
+//     next(); // ✅ CRITICAL!
+//   } catch (err) {
+//     console.error("❌ MongoDB connection error:", err);
+//     return res.status(500).json({ message: "DB connection failed" });
+//   }
+// });
 
 
 app.get("/", (req, res) => {
   res.send("hello and welcome to spend-manager-api!");
 });
 
-app.use("/auth/v1", auth);
-app.use("/account", account);
-app.use("/payment", payment);
+// app.use("/auth/v1", auth);
+// app.use("/account", account);
+// app.use("/payment", payment);
 
 
 module.exports = serverless(app);
