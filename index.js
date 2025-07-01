@@ -28,8 +28,3 @@ app.get('/', (req, res) => {
 app.use("/auth/v1",auth);
 app.use("/account",account);
 app.use("/payment",payment);
-
-
-app.listen(PORT, () => {
- console.log(`Server is running on port ${PORT}`);
-});
