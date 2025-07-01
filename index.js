@@ -30,9 +30,9 @@ app.get("/",(req,res)=>{
   res.send("hello and welcome to spend-manager-api!")
 })
 
-// app.listen(3000,()=>{
-//   console.log("server is running on 3000")
-// })
+app.listen(3000,()=>{
+  console.log("server is running on 3000")
+})
 
 app.use("/auth/v1",auth);
 app.use("/account",account);
