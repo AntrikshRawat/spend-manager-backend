@@ -36,12 +36,12 @@ router.post("/",[
    password:hashedPassword
   });
   const authToken = jwt.sign({id:newUser._id},secret);
-  res.cookie('authToken',authToken,{
-   httpOnly:false,
-   sameSite:'lax',
-   secure:false,
-   maxAge:30*24*60*60*1000
-  })
+    res.cookie("authToken", token, {
+      httpOnly: true,
+      sameSite: 'none',     
+      secure: true,        
+      maxAge:30*24*60*60*1000
+    });
   return res.json({status:true,message:"Account Created Succesfully"})
  }catch(e){
   res.status(500).json({status:false,message:"Internal Application Error"});
