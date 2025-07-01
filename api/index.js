@@ -5,29 +5,41 @@ const account = require("../Account");
 const payment = require("../Payment");
 const cors = require('cors');
 const cookieParser = require("cookie-parser");
-
+const serverless = require("serverless-http");
 
 const app = express();
-const serverless = require("serverless-http");
+
 app.use(cors({
-  origin: ["http://localhost:5173"], 
-  credentials: true           
+  origin: ["http://localhost:5173"],
+  credentials: true
 }));
-
-
-connectToDB();
-app.use(express.json()); // For parsing application/json
-app.use(express.urlencoded({ extended: true })); // For parsing application
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get("/",(req,res)=>{
-  res.send("hello and welcome to spend-manager-api!")
-})
+let isDBConnected = false;
 
-app.use("/auth/v1",auth);
-app.use("/account",account);
-app.use("/payment",payment);
+app.use(async (req, res, next) => {
+  if (isDBConnected) return next();
+
+  try {
+    await connectToDB();
+    isDBConnected = true;
+    console.log("✅ MongoDB Connected!");
+    next();
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err);
+    res.status(500).json({ message: "Database connection failed" });
+  }
+});
+
+app.get("/", (req, res) => {
+  res.send("hello and welcome to spend-manager-api!");
+});
+
+app.use("/auth/v1", auth);
+app.use("/account", account);
+app.use("/payment", payment);
 
 
 module.exports = serverless(app);
