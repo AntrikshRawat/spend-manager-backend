@@ -6,7 +6,6 @@ Router.post("/", async (req, res) => {
   try {
     const { accountMembers } = req.body;
     const { accountId } = req.query;
-    console.log(accountMembers)
 
     if (!accountId || !Array.isArray(accountMembers)) {
       return res.status(400).json({ status: false, message: "Invalid input!" });

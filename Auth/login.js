@@ -14,7 +14,7 @@ const Router = express.Router();
 
 Router.post("/", async (req, res) => {
   try {
-    const { userName, password } = req.body;
+    const { userName, password, rememberMe } = req.body;
 
     // Determine if input is an email or username
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userName);
@@ -36,7 +36,7 @@ Router.post("/", async (req, res) => {
       httpOnly: false,       // In production: change to true
       sameSite: 'lax',       // 'none' for cross-origin with secure
       secure: false,         // In production: set to true
-      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+      maxAge:rememberMe ? 24*60*60*1000 : 30*24*60*60*1000 // 1day or 30 day
     });
 
     return res.json({ status: true, message: "Login Successful" });
