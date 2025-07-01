@@ -33,9 +33,9 @@ Router.post("/", async (req, res) => {
     const token = jwt.sign({ id: user._id }, secret);
 
     res.cookie("authToken", token, {
-      httpOnly: false,       // In production: change to true
-      sameSite: 'lax',       // 'none' for cross-origin with secure
-      secure: false,         // In production: set to true
+      httpOnly: true,
+      sameSite: 'none',     
+      secure: true,        
       maxAge:rememberMe ? 24*60*60*1000 : 30*24*60*60*1000 // 1day or 30 day
     });
 
