@@ -14,7 +14,14 @@ app.use(cors({
   credentials: true           
 }));
 
-
+let isDBConnected = false;
+app.use(async(req,res,next)=>{
+  if(!isDBConnected) {
+    await connectToDB();
+    isDBConnected = true;
+  }
+  next();
+})
 connectToDB();
 app.use(express.json()); // For parsing application/json
 app.use(express.urlencoded({ extended: true })); // For parsing application
@@ -23,10 +30,6 @@ app.use(cookieParser());
 
 app.get("/",(req,res)=>{
   res.send("hello and welcome to spend-manager-api!")
-})
-
-app.listen(3000,()=>{
-  console.log("server is running on 3000")
 })
 
 app.use("/auth/v1",auth);
