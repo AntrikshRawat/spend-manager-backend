@@ -11,5 +11,6 @@ const connectToDB=async()=>{
   console.log("Connection Error",e);
  }
 }
+connectToDB()
 
 module.exports = connectToDB;
