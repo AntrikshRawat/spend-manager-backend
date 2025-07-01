@@ -9,7 +9,7 @@ const cookieParser = require("cookie-parser");
 
 const app = express();
 app.use(cors({
-  origin: "*", 
+  origin: ["https://spend-manager-f.vercel.app/","http://localhost:3000/"], 
   credentials: true       
 }));
 
