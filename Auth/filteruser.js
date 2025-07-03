@@ -8,14 +8,15 @@ const Router = express.Router();
 
 Router.get('/', async (req, res) => {
   try {
-    const searchQuery = req.query.search.toLowerCase();
-    const regex = new RegExp(`^${searchQuery}`); // ^ for "starts with"
+    const searchQuery = req.query.search || '';
+    const regex = new RegExp(`^${searchQuery}`, 'i'); 
     const users = await User.find({ userName: regex }).select('_id userName');
-    res.json({users});
+    res.json({ users });
   } catch (error) {
     console.error('Error filtering users:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 module.exports = Router;
