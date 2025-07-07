@@ -9,6 +9,8 @@ const express = require("express");
 const Payment = require("../Models/Payment");
 const { inrAccount } = require("../Middleware/updateaccount");
 const { validationResult, body } = require('express-validator');
+const createNotification = require("../Middleware/createNotification");
+const Account = require("../Models/Account");
 const Router = express.Router();
 
 Router.post("/",[
@@ -29,7 +31,17 @@ Router.post("/",[
    amount,
    memberExpenses
   })
-  return res.json({status:true,message:"Payment Added Successfully."});
+   const uId = req.userId;
+  const {accountMembers,accountName} = await Account.findById(accountId).select("accountMembers accountName");
+  const message = `${paidBy} added a new transaction of ₹${amount} in ${accountName} account.`;
+  await createNotification(
+    paidBy,
+    message,
+    accountId,
+    accountMembers.filter((member)=>member!==uId),
+    "payment"
+  )
+  return res.json({status:true,message:"Payment Added Successfully."});;
  }catch(e) {
   res.status(500).json({status:false,message:"Internal Application Error at end"});
  }

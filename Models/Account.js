@@ -9,7 +9,7 @@ const AccountSchema = new Schema({
  },
  accountHolder:{
   type:mongoose.Schema.Types.ObjectId,
-  ref:'account',
+  ref:'user',
   require:true
  },
  accountMembers:{
