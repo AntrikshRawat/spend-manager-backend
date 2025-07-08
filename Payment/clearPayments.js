@@ -29,9 +29,10 @@ const uId = req.userId;
          accountMembers.filter((member)=>member!==uId),
          "payment"
        )
+       await clrAccount(accountId);
        return res.json({message:"Account Reset Successfully."});;
  }catch(e) {
   res.status(500).json({message:"Internal Application Error"});
  }
-},clrAccount)
+})
 module.exports = Router;

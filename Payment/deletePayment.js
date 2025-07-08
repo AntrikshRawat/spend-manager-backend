@@ -31,11 +31,12 @@ const uId = req.userId;
          accountMembers.filter((member)=>member!==uId),
          "payment"
        )
+       await dcrAccount(accountId,amount);
        return res.json({ message: "Payment deleted successfully." });;
    } catch (e) {
      res.status(500).json({  message: "Internal Application Error" });
    }
- },dcrAccount
+ }
 );
 
 

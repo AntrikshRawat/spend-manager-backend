@@ -1,8 +1,7 @@
 const Account = require("../Models/Account");
 
-const inrAccount = async (req, res, next) => {
+const inrAccount = async (accountId,amount) => {
   try {
-    const { accountId, amount } = req.body;
     const account = await Account.findByIdAndUpdate(
      accountId,
      { $inc: { totalTransaction: 1, totalSpend: amount } },
@@ -10,17 +9,13 @@ const inrAccount = async (req, res, next) => {
    );
    
    if (!account) return res.status(400).json({  message: "Account Not Found!" });
-   
-    next();
   } catch (e) {
     res.status(500).json({  message: "Internal Application Error" });
   }
 };
 
-const dcrAccount = async (req, res, next) => {
+const dcrAccount = async (accountId,amount) => {
   try {
-    const { accountId, amount } = req.query;
-
     if (!amount || amount <= 0) {
       return res.status(400).json({  message: "Invalid Amount!" });
     }
@@ -48,7 +43,6 @@ const dcrAccount = async (req, res, next) => {
       },
       { new: true }
     );
-    next();
   } catch (e) {
     console.error(e);
     res.status(500).json({  message: "Internal Application Error." });
@@ -56,9 +50,8 @@ const dcrAccount = async (req, res, next) => {
 };
 
 
-const clrAccount = async (req, res, next) => {
+const clrAccount = async (accountId) => {
   try {
-    const { accountId } = req.query;
     const account = await Account.findByIdAndUpdate(
      accountId,
      { $set: { totalTransaction: 0, totalSpend: 0 } },
@@ -66,8 +59,6 @@ const clrAccount = async (req, res, next) => {
    );
    
    if (!account) return res.status(400).json({  message: "Account Not Found!" });
-   
-    next();
   } catch (e) {
     res.status(500).json({  message: "Internal Application Error" });
   }

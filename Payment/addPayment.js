@@ -41,9 +41,10 @@ Router.post("/",[
     accountMembers.filter((member)=>member!==uId),
     "payment"
   )
+  await inrAccount(accountId,amount);
   return res.json({message:"Payment Added Successfully."});;
  }catch(e) {
   res.status(500).json({message:"Internal Application Error at end"});
  }
-},inrAccount)
+})
 module.exports = Router;
