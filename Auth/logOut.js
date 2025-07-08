@@ -14,9 +14,9 @@ Router.post("/",async(req,res)=>{
   sameSite:'lax',
   secure:false,
  })
- return res.json({status:true,message:"LogOut Successfully!"});
+ return res.json({message:"LogOut Successfully!"});
 }catch(e) {
- res.status(500).json({status:false,message:"Internal Application Error"});
+ res.status(500).json({message:"Internal Application Error"});
 }
 })
 

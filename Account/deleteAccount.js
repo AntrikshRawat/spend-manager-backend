@@ -16,7 +16,7 @@ Router.delete("/",async(req,res)=>{
   const {accountId} = req.body;
   const deleted = await Account.findByIdAndDelete(accountId);
   if(!deleted) {
-   return res.status(404).json({status:false,message:"No Matching Account Found!"});
+   return res.status(404).json({message:"No Matching Account Found!"});
   }
   await Payment.deleteMany({accountId});
 
@@ -31,9 +31,9 @@ Router.delete("/",async(req,res)=>{
       deleted.accountMembers.slice(0,-1),
       "account"
     );
-    return res.json({status:true,message:"Account Deleted Succesfully."});;
+    return res.json({message:"Account Deleted Succesfully."});;
  }catch(e) {
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
 })
 module.exports = Router;

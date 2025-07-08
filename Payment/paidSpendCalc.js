@@ -8,7 +8,7 @@ Router.post("/", async (req, res) => {
     const { accountId } = req.query;
 
     if (!accountId || !Array.isArray(accountMembers)) {
-      return res.status(400).json({ status: false, message: "Invalid input!" });
+      return res.status(400).json({  message: "Invalid input!" });
     }
 
     // Fetch all transactions of the account
@@ -49,7 +49,7 @@ Router.post("/", async (req, res) => {
     });
   } catch (err) {
     console.error("Error in spend summary route:", err);
-    res.status(500).json({ status: false, message: "Internal Server Error" });
+    res.status(500).json({  message: "Internal Server Error" });
   }
 });
 

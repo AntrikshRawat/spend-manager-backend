@@ -20,7 +20,7 @@ Router.post("/",[
  try {
    const errors = validationResult(req);
    if(!errors.isEmpty()) {
-    return res.status(400).json({status:false,message:errors.array()})
+    return res.status(400).json({message:errors.array()})
    }
 
   const uId = req.userId;
@@ -40,9 +40,9 @@ Router.post("/",[
     acMembers,
     "account"
   );
-  return res.json({status:true,message:"Account Created Successfully"});
+  return res.json({message:"Account Created Successfully"});
  }catch(e) {
-   res.status(500).json({status:false,message:"Internal Application Error"});
+   res.status(500).json({message:"Internal Application Error"});
  }
 })
 

@@ -18,7 +18,7 @@ Router.get("/",accountVerification,async(req,res)=>{
   const allPayments = await Payment.find({accountId:accountId});
   return res.json(allPayments);
  }catch(e) {
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
 });
 

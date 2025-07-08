@@ -14,7 +14,7 @@ Router.post("/",async(req,res)=>{
   const accountDetails = await Account.findById(acId);
   return res.json(accountDetails);
  }catch(e) {
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
 })
 

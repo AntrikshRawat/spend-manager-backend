@@ -16,7 +16,7 @@ Router.get("/",async(req,res)=>{
   })
   res.json(otherAccounts);
  }catch(e) {
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
 })
 module.exports = Router;

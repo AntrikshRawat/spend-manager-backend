@@ -9,11 +9,11 @@ const inrAccount = async (req, res, next) => {
      { new: true }
    );
    
-   if (!account) return res.status(400).json({ status: false, message: "Account Not Found!" });
+   if (!account) return res.status(400).json({  message: "Account Not Found!" });
    
     next();
   } catch (e) {
-    res.status(500).json({ status: false, message: "Internal Application Error" });
+    res.status(500).json({  message: "Internal Application Error" });
   }
 };
 
@@ -22,20 +22,20 @@ const dcrAccount = async (req, res, next) => {
     const { accountId, amount } = req.query;
 
     if (!amount || amount <= 0) {
-      return res.status(400).json({ status: false, message: "Invalid Amount!" });
+      return res.status(400).json({  message: "Invalid Amount!" });
     }
 
     let account = await Account.findById(accountId);
     if (!account) {
-      return res.status(400).json({ status: false, message: "Account Not Found!" });
+      return res.status(400).json({  message: "Account Not Found!" });
     }
 
     if (account.totalTransaction <= 0 || account.totalSpend <= 0) {
-      return res.status(500).json({ status: false, message: "Invalid Operation." });
+      return res.status(500).json({  message: "Invalid Operation." });
     }
 
     if (amount > account.totalSpend) {
-      return res.status(500).json({ status: false, message: "Invalid Transaction Access!" });
+      return res.status(500).json({  message: "Invalid Transaction Access!" });
     }
 
     account = await Account.findByIdAndUpdate(
@@ -51,7 +51,7 @@ const dcrAccount = async (req, res, next) => {
     next();
   } catch (e) {
     console.error(e);
-    res.status(500).json({ status: false, message: "Internal Application Error." });
+    res.status(500).json({  message: "Internal Application Error." });
   }
 };
 
@@ -65,11 +65,11 @@ const clrAccount = async (req, res, next) => {
      { new: true }
    );
    
-   if (!account) return res.status(400).json({ status: false, message: "Account Not Found!" });
+   if (!account) return res.status(400).json({  message: "Account Not Found!" });
    
     next();
   } catch (e) {
-    res.status(500).json({ status: false, message: "Internal Application Error" });
+    res.status(500).json({  message: "Internal Application Error" });
   }
 };
 

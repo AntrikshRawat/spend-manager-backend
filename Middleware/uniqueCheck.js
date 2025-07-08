@@ -10,7 +10,7 @@ const userNameCheck = async(req,res,next)=>{
  }
  next();
 }catch(e){
- res.status(500).json({status:false,message:"Internal Application Error"});
+ res.status(500).json({message:"Internal Application Error"});
 }
 }
 
@@ -19,11 +19,11 @@ const emailCheck=async(req,res,next)=>{
  const {email} = req.body;
  const user = await User.findOne({email})
  if(user) {
-  return res.status(400).json({status:false,message:"email already Exists"});
+  return res.status(400).json({message:"email already Exists"});
  }
  next();
 }catch(e){
- res.status(500).json({status:false,message:"Internal Application Error"});
+ res.status(500).json({message:"Internal Application Error"});
 }
 }
 

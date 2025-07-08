@@ -13,7 +13,7 @@ const Router = express.Router();
 const createNotification = require("../Middleware/createNotification");
 const User = require("../Models/User");
 
-Router.put("/",clrAccount,async(req,res)=>{
+Router.put("/",async(req,res)=>{
  try{
   const {accountId} = req.query;
   await Payment.deleteMany({accountId});
@@ -29,9 +29,9 @@ const uId = req.userId;
          accountMembers.filter((member)=>member!==uId),
          "payment"
        )
-       return res.json({status:true,message:"Account Reset Successfully."});;
+       return res.json({message:"Account Reset Successfully."});;
  }catch(e) {
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
-})
+},clrAccount)
 module.exports = Router;

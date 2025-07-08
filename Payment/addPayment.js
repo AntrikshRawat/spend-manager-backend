@@ -16,14 +16,14 @@ const Router = express.Router();
 Router.post("/",[
  body("where","Please add a place where you spend!").isLength({min:4}),
  body("amount","Amount Should be greater than 0!").isFloat({ gt: 0 })
-],inrAccount,async(req,res)=>{
+],async(req,res)=>{
  try{
    const errors = validationResult(req);
    if(!errors.isEmpty()) {
-    return res.status(400).json({status:false,message:errors.array()})
+    return res.status(400).json({message:errors.array()})
    }
   const {accountId,where,paidBy,amount,memberExpenses} = req.body;
-  if(!paidBy) return res.status(400).json({status:false,message:"Who paid for this Payment?"});
+  if(!paidBy) return res.status(400).json({message:"Who paid for this Payment?"});
   await Payment.create({
    accountId,
    where,
@@ -41,9 +41,9 @@ Router.post("/",[
     accountMembers.filter((member)=>member!==uId),
     "payment"
   )
-  return res.json({status:true,message:"Payment Added Successfully."});;
+  return res.json({message:"Payment Added Successfully."});;
  }catch(e) {
-  res.status(500).json({status:false,message:"Internal Application Error at end"});
+  res.status(500).json({message:"Internal Application Error at end"});
  }
-})
+},inrAccount)
 module.exports = Router;

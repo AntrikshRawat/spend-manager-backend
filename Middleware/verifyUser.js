@@ -6,21 +6,21 @@ const verifyUser = async(req,res,next)=>{
  const token = req.cookies.authToken;
  try{
   if(!token) {
-   return res.status(401).json({status:false,message:"Your Token is Expired! Please Login Again."})
+   return res.status(401).json({message:"Your Token is Expired! Please Login Again."})
   }
   let user;
   try{
    user = await jwt.verify(token,secret);
   }catch(e) {
-   return res.status(401).json({status:false,message:"Malformed token."});
+   return res.status(401).json({message:"Malformed token."});
   }
   if(!user) {
-   return res.status(501).json({status:false,message:"Unauthorized Access! Not Allowed"})
+   return res.status(501).json({message:"Unauthorized Access! Not Allowed"})
   }
   req.userId = user.id;
   next();
  }catch(e){
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
 }
 

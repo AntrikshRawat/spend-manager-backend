@@ -22,12 +22,12 @@ Router.post("/", async (req, res) => {
     const user = await User.findOne(isEmail ? { email: userName } : { userName: userName });
 
     if (!user) {
-      return res.status(401).json({ status: false, message: "Incorrect Credentials" });
+      return res.status(401).json({ message: "Incorrect Credentials" });
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
-      return res.status(401).json({ status: false, message: "Incorrect Credentials" });
+      return res.status(401).json({ message: "Incorrect Credentials" });
     }
 
     const authToken = jwt.sign({ id: user._id }, secret);
@@ -39,10 +39,10 @@ Router.post("/", async (req, res) => {
       maxAge:rememberMe ? 24*60*60*1000 : 30*24*60*60*1000 // 1day or 30 day
     });
 
-    return res.json({ status: true, message: "Login Successful" });
+    return res.json({ message: "Login Successful" });
 
   } catch (e) {
-    res.status(500).json({ status: false, message: "Internal Application Error" });
+    res.status(500).json({ message: "Internal Application Error" });
   }
 });
 

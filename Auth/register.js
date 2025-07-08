@@ -22,7 +22,7 @@ router.post("/",[
 ],userNameCheck,emailCheck,async(req,res)=>{
  const errors = validationResult(req);
  if(!errors.isEmpty()) {
-  return res.status(400).json({status:false,message:errors.array()})
+  return res.status(400).json({message:errors.array()})
  }
  try{
  const {firstName,lastName,userName,email,password} = req?.body;
@@ -42,9 +42,9 @@ router.post("/",[
       secure: true,        
       maxAge:30*24*60*60*1000
     });
-  return res.json({status:true,message:"Account Created Succesfully"})
+  return res.json({message:"Account Created Succesfully"})
  }catch(e){
-  res.status(500).json({status:false,message:"Internal Application Error"});
+  res.status(500).json({message:"Internal Application Error"});
  }
 })
 
