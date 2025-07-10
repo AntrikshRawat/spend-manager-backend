@@ -28,7 +28,7 @@ Router.delete("/",async(req,res)=>{
       userName,
       message,
       null,
-      deleted.accountMembers.slice(0,-1),
+      deleted.accountMembers.filter((mem)=>mem!==uId),
       "account"
     );
     return res.json({message:"Account Deleted Succesfully."});;

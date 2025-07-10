@@ -1,51 +1,56 @@
-/*
-
-/payment/delete
-
-*/
-
-
 const express = require("express");
 const { dcrAccount } = require("../Middleware/updateaccount");
 const Payment = require("../Models/Payment");
 const Account = require("../Models/Account");
-const Router = express.Router();
 const createNotification = require("../Middleware/createNotification");
 
-Router.delete("/",async (req, res) => {
-   try {
-     const { accountId, paymentId } = req.query;
-     const payment = await Payment.findOne({ _id:paymentId, accountId });
-     if (!payment) {
-       return res.status(400).json({  message: "Payment not found!" });
-     }
+const Router = express.Router();
 
-         const uId = req.userId;
-       const {accountMembers,accountName} = await Account.findById(accountId).select("accountMembers accountName");
-       const message = `${payment.paidBy} deleted a transaction of amount ₹${payment.amount} from ${accountName} account.`;
-       const res = await dcrAccount(accountId,amount);
-       if(res) {
-             await Payment.deleteOne({ _id:paymentId, accountId });
+Router.delete("/", async (req, res) => {
+  try {
+    const { accountId, paymentId } = req.query;
 
-             await createNotification(
-         payment.paidBy,
-         message,
-         accountId,
-         accountMembers.filter((member)=>member!==uId),
-         "payment"
-       )
+    if (!accountId || !paymentId) {
+      return res.status(400).json({ message: "accountId and paymentId are required" });
+    }
 
-       return res.json({ message: "Payment deleted successfully." });
-       }
+    const payment = await Payment.findOne({ _id: paymentId, accountId });
+    if (!payment) {
+      return res.status(404).json({ message: "Payment not found!" });
+    }
 
-       return res.json({message:"Invalid Date!"});
-       
-   } catch (e) {
-     res.status(500).json({  message: "Internal Application Error" });
-   }
- }
-);
+    const uId = req.userId;
 
+    const account = await Account.findById(accountId).select("accountMembers accountName");
+    if (!account) {
+      return res.status(404).json({ message: "Account not found!" });
+    }
 
+    const { accountMembers, accountName } = account;
+
+    const accountUpdated = await dcrAccount(accountId, payment.amount);
+
+    if (!accountUpdated) {
+      return res.status(400).json({ message: "Failed to update account totals" });
+    }
+
+    await Payment.deleteOne({ _id: paymentId, accountId });
+
+    const message = `${payment.paidBy} deleted a transaction of amount ₹${payment.amount} from ${accountName} account.`;
+
+    await createNotification(
+      payment.paidBy,
+      message,
+      accountId,
+      accountMembers.filter((member) => member !== uId),
+      "payment"
+    );
+
+    return res.status(200).json({ message: "Payment deleted successfully." });
+  } catch (e) {
+    console.error("Error in /payment/delete:", e);
+    res.status(500).json({ message: "Internal Application Error" });
+  }
+});
 
 module.exports = Router;
