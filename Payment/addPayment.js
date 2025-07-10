@@ -7,7 +7,7 @@
 
 const express = require("express");
 const Payment = require("../Models/Payment");
-const { inrAccount } = require("../Middleware/updateaccount");
+const { inrAccount, dcrAccount } = require("../Middleware/updateaccount");
 const { validationResult, body } = require('express-validator');
 const createNotification = require("../Middleware/createNotification");
 const Account = require("../Models/Account");
@@ -24,16 +24,19 @@ Router.post("/",[
    }
   const {accountId,where,paidBy,amount,memberExpenses} = req.body;
   if(!paidBy) return res.status(400).json({message:"Who paid for this Payment?"});
+
+   const uId = req.userId;
+  const {accountMembers,accountName} = await Account.findById(accountId).select("accountMembers accountName");
+  const message = `${paidBy} added a new transaction of ₹${amount} in ${accountName} account.`;
+  const res = await inrAccount(accountId,amount);
+  if(res) {
   await Payment.create({
    accountId,
    where,
    paidBy,
    amount,
    memberExpenses
-  })
-   const uId = req.userId;
-  const {accountMembers,accountName} = await Account.findById(accountId).select("accountMembers accountName");
-  const message = `${paidBy} added a new transaction of ₹${amount} in ${accountName} account.`;
+  });
   await createNotification(
     paidBy,
     message,
@@ -41,8 +44,9 @@ Router.post("/",[
     accountMembers.filter((member)=>member!==uId),
     "payment"
   )
-  await inrAccount(accountId,amount);
-  return res.json({message:"Payment Added Successfully."});;
+  return res.json({message:"Payment Added Successfully."});
+  }
+  return res.json({message:"Invalid Data!"});
  }catch(e) {
   res.status(500).json({message:"Internal Application Error at end"});
  }

@@ -28,8 +28,8 @@ const uId = req.userId;
          accountId,
          accountMembers.filter((member)=>member!==uId),
          "payment"
-       )
-       await clrAccount(accountId);
+        )
+    await clrAccount(accountId);
        return res.json({message:"Account Reset Successfully."});;
  }catch(e) {
   res.status(500).json({message:"Internal Application Error"});
