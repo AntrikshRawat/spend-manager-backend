@@ -77,7 +77,7 @@ router.post("/", async (req, res) => {
           Authorization: `Bearer ${process.env.HF_API_KEY}`,
           "Content-Type": "application/json",
         },
-        timeout: 30000,
+        timeout: 300000,
       }
     );
 
