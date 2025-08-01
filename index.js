@@ -9,7 +9,7 @@ const http = require("http");
 const socket = require("./socket");
 const verifyUser = require('./Middleware/verifyUser');
 const Notification = require('./Models/Notification');
-const openai = require("./OpenAi");
+const gemini = require("./Gemini");
 
 const app = express();
 const server = http.createServer(app);
@@ -55,4 +55,4 @@ app.get("/notifications",verifyUser,async(req,res)=>{
 app.use("/auth/v1",auth);
 app.use("/account",account);
 app.use("/payment",payment);
-app.use("/accountsummary",openai);
+app.use("/accountsummary",gemini);
