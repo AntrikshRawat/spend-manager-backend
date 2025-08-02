@@ -10,11 +10,11 @@ const Router = express.Router();
 Router.post("/",async(req,res)=>{
  try{
  res.clearCookie("authToken",{
-  httpOnly:false,
-  sameSite:'lax',
-  secure:false,
+  httpOnly:true,
+  sameSite:'none',
+  secure:true,
  })
- return res.json({message:"LogOut Successfully!"});
+ return res.json({message:"logout Successfully!"});
 }catch(e) {
  res.status(500).json({message:"Internal Application Error"});
 }
