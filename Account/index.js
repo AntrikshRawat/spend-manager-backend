@@ -12,7 +12,7 @@ const verifyUser = require("../Middleware/verifyUser");
 const Router = express.Router();
 
 const getAccounts = require("./getAccounts");
-Router.use("/getaccounts",getAccounts);
+Router.use("/getaccounts",verifyUser,getAccounts);
 
 const createAccount = require('./createAccount');
 Router.use("/create",verifyUser,createAccount);

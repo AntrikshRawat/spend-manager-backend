@@ -5,7 +5,6 @@ const Account = require("../Models/Account");
 Router.get("/", async (req, res) => {
   try {
     const userId = req.userId;
-
     const [createdAccounts, joinedAccounts] = await Promise.all([
       Account.find({ accountHolder: userId }),
       Account.find({ accountHolder: { $ne: userId }, accountMembers: userId })
