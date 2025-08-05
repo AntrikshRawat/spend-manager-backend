@@ -11,14 +11,11 @@ const verifyUser = require("../Middleware/verifyUser");
 
 const Router = express.Router();
 
+const getAccounts = require("./getAccounts");
+Router.use("/getaccounts",getAccounts);
+
 const createAccount = require('./createAccount');
 Router.use("/create",verifyUser,createAccount);
-
-const createdAccounts = require("./getCreatedAccount");
-Router.use("/created",verifyUser,createdAccounts);
-
-const otherAccounts = require("./getOtherAccount");
-Router.use("/other",verifyUser,otherAccounts);
 
 const deleteAccount = require("./deleteAccount");
 Router.use("/delete",verifyUser,deleteAccount);
