@@ -4,11 +4,13 @@ const Account = require("../Models/Account");
 const Payment = require("../Models/Payment");
 const User = require("../Models/User");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+require('dotenv').config();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function geminiResponse(membersName, accountInfo, paymentRecords) {
   const defaultPrompt =
     "Please act as an expert financial analyst. I'm providing you with three sets of data: the main account information, an array of member names, and a full list of payment records. I need you to analyze all of this data and generate a comprehensive, professional financial summary. Your report should be clear, well-structured, and easy for anyone to understand. And also use appropriate heading boldness and etc. Make sure to prominently feature the group's name at the top. The body of the report must include the total spending for the group, the total number of transactions, and a list of all members. Most importantly, provide a breakdown for each individual member that clearly shows the total amount they personally paid versus what their calculated share of the expenses was. Finally, conclude the report with a clear, unambiguous settlement plan that states exactly who needs to pay whom, and the precise amount in Indian Rupees (₹), to balance the account. While ensuring all these details are accurate and present, feel free to use your own professional wording and structure to make the report feel as if it were written by a real analyst. Generate only the report itself; do not include any introductory or conversational text like Here is your report.";
+
 
   const fullPrompt = `${defaultPrompt}
 

@@ -21,6 +21,10 @@ const UserSchema = new Schema({
   require:true,
   unique:true
  },
+ pushSubscription:{
+     type:Object,
+     default:null
+ },
  password:{
   type:String,
   require:true

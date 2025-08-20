@@ -9,7 +9,6 @@ const express = require('express');
 const verifyUser = require('../Middleware/verifyUser');
 const User = require('../Models/User');
 const router = express.Router();
-require('dotenv').config();
 router.get("/",verifyUser,async(req,res)=>{
  try{
   const userId = req.userId;

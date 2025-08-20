@@ -10,6 +10,9 @@ const socket = require("./socket");
 const verifyUser = require('./Middleware/verifyUser');
 const Notification = require('./Models/Notification');
 const gemini = require("./Gemini");
+const userAccount = require("./UserAccount");
+const webpush = require("web-push");
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -35,6 +38,12 @@ connectToDB().then(() => {
   process.exit(1);
 });
 
+webpush.setVapidDetails(
+  "mailto:antrikshrawat2@gmail.com",
+  process.env.WEB_PUSH_PUBLIC_KEY,
+  process.env.WEB_PUSH_PRIVATE_KEY
+);
+
 
 app.get("/",(req,res)=>{
   res.send("hello and welcome to spend-manager-api!")
@@ -56,3 +65,4 @@ app.use("/auth/v1",auth);
 app.use("/account",account);
 app.use("/payment",payment);
 app.use("/accountsummary",gemini);
+app.use("/userAccount",userAccount);
