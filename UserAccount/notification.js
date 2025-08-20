@@ -8,9 +8,12 @@ Router.post("/", verifyUser, async (req, res) => {
   const { subscription } = req.body;
   const userId = req.userId;
   try {
-    const user = await User.findByIdAndUpdate(userId, {
-      pushSubscription: subscription,
-    });
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { pushSubscription: subscription },
+      { new: true }
+    );
+
     if (!user) {
       res.status(404).json({ status: false, message: "No User Found!" });
       return;
@@ -26,14 +29,14 @@ Router.post("/", verifyUser, async (req, res) => {
 Router.delete("/", verifyUser, async (req, res) => {
   const userId = req.userId;
   try {
-     const user  = await User.findByIdAndUpdate(userId,{
-          pushSubscription:null
-     });
-     if(!user) {
-          res.status(404).json({ status: false, message: "No User Found!" });
+    const user = await User.findByIdAndUpdate(userId, {
+      pushSubscription: null,
+    });
+    if (!user) {
+      res.status(404).json({ status: false, message: "No User Found!" });
       return;
-     }
-     res.json({status:false,message:"Push Notification Disabled!"});
+    }
+    res.json({ status: false, message: "Push Notification Disabled!" });
   } catch (_) {
     res.status(500).json({ status: false, message: "Internal Server Error!" });
     return;
