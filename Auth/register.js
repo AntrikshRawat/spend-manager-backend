@@ -38,7 +38,7 @@ router.post("/",[
   const authToken = jwt.sign({id:newUser._id},secret);
     res.cookie("authToken", authToken, {
       httpOnly: true,
-      sameSite: 'none',     
+      sameSite: 'lax',     
       secure: true,        
       maxAge:30*24*60*60*1000
     });

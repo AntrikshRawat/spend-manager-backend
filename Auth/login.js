@@ -34,7 +34,7 @@ Router.post("/", async (req, res) => {
 
     res.cookie("authToken", authToken, {
       httpOnly: true,
-      sameSite: 'none',     
+      sameSite: 'lax',     
       secure: true,        
       maxAge:rememberMe ? 24*60*60*1000 : 30*24*60*60*1000 // 1day or 30 day
     });
