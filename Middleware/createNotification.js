@@ -39,7 +39,7 @@ async function createNotification(
             body: message,
             url:
               relatedAccount?`/my-accounts/${relatedAccount}`
-                : null,
+                : "/my-accounts",
           })
         );
       } catch (err) {
