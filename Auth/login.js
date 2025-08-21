@@ -39,7 +39,7 @@ Router.post("/", async (req, res) => {
       maxAge:rememberMe ? 24*60*60*1000 : 30*24*60*60*1000 // 1day or 30 day
     });
 
-    return res.json({ message: "Login Successful" });
+    return res.json({ message: "Login Successful",authToken });
 
   } catch (e) {
     res.status(500).json({ message: "Internal Application Error" });

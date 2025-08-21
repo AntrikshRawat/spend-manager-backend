@@ -42,7 +42,7 @@ router.post("/",[
       secure: true,        
       maxAge:30*24*60*60*1000
     });
-  return res.json({message:"Account Created Succesfully"})
+  return res.json({message:"Account Created Succesfully",authToken})
  }catch(e){
   res.status(500).json({message:"Internal Application Error"});
  }
