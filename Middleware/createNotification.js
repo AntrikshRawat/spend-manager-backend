@@ -38,7 +38,7 @@ async function createNotification(
                 : "Payment Notification",
             body: message,
             url:
-              relatedAccount?`/accounts/${relatedAccount}`
+              relatedAccount?`/my-accounts/${relatedAccount}`
                 : null,
           })
         );
