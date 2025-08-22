@@ -12,9 +12,11 @@ const User = require("../Models/User");
 Router.post("/", verifyUser, async (req, res) => {
   const userId = req.userId;
   try {
-    User.findByIdAndDelete(userId, {
-      pushSubscription: null,
-    });
+    await User.findByIdAndDelete(
+      userId,
+      { pushSubscription: null },
+      { new: true }
+    );
   } catch (e) {
     res.status(500).json({ message: "Internal Application Error" });
     return;
