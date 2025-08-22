@@ -12,7 +12,7 @@ const User = require("../Models/User");
 Router.post("/", verifyUser, async (req, res) => {
   const userId = req.userId;
   try {
-    await User.findByIdAndDelete(
+    await User.findByIdAndUpdate(
       userId,
       { pushSubscription: null },
       { new: true }
