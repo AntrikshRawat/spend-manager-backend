@@ -42,8 +42,9 @@ Router.post("/", async (req, res) => {
     user.verificationCode = hashCode(verificationCode);
     user.verificationExpiry = Date.now() + 10*60*1000;
     
+    await sendMail(user.email,user.firstName,verificationCode);
+    
     try {
-      await sendMail(user.email,user.firstName,verificationCode);
       await user.save();
     } catch (emailError) {
       console.error("Email sending failed:", emailError);

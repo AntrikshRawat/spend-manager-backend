@@ -55,7 +55,6 @@ async function sendMail(userEmail,userName,verficationCode) {
       requestBody: { raw: encodedMessage },
     });
 
-    console.log('Email sent successfully via Gmail API');
   } catch (error) {
     console.error('Error sending email:', error);
   }
