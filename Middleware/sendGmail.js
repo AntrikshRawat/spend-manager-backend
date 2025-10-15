@@ -1,4 +1,3 @@
-const nodemailer = require('nodemailer');
 const { google } = require('googleapis');
 
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -33,28 +32,30 @@ oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 async function sendMail(userEmail,userName,verficationCode) {
   try {
-    const accessToken = await oAuth2Client.getAccessToken();
+    const gmail = google.gmail({ version: 'v1', auth: oAuth2Client });
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        type: 'OAuth2',
-        user: USER_EMAIL,
-        clientId: CLIENT_ID,
-        clientSecret: CLIENT_SECRET,
-        refreshToken: REFRESH_TOKEN,
-        accessToken: accessToken.token
-      },
+    const messageParts = [
+      `From: Spend Manager <${USER_EMAIL}>`,
+      `To: ${userEmail}`,
+      'Subject: Reset Password Verification Code',
+      'Content-Type: text/html; charset=utf-8',
+      '',
+      html(userName, verficationCode),
+    ];
+
+    const message = messageParts.join('\n');
+    const encodedMessage = Buffer.from(message)
+      .toString('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+
+    await gmail.users.messages.send({
+      userId: 'me',
+      requestBody: { raw: encodedMessage },
     });
 
-    const mailOptions = {
-      from: `SpendManager <${USER_EMAIL}>`,
-      to: `${userEmail}`,
-      subject: 'Reset Password Verification Code Email',
-      html:html(userName,verficationCode),
-    };
-
-    await transporter.sendMail(mailOptions);
+    console.log('Email sent successfully via Gmail API');
   } catch (error) {
     console.error('Error sending email:', error);
   }
