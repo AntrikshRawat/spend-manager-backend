@@ -4,13 +4,10 @@ const verifyUser = require("../Middleware/verifyUser");
 const Router = express.Router();
 
 const updatePassword = require("./updatePassword");
-Router.use("/updatepass",verifyUser,updatePassword);
+Router.use("/updatepassword",verifyUser,updatePassword);
 
-const forgotPassword = require("./forgotPassword");
-Router.use("/forgotpass",verifyUser,forgotPassword);
-
-const deleteAccount = require("./deleteAccount");
-Router.use("/delete",verifyUser,deleteAccount);
+const forgotPassword = require("./fogotPassword");
+Router.use("/forgotpassword",forgotPassword);
 
 const notification = require("./notification");
 Router.use("/subscribe",notification);

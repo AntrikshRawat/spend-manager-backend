@@ -28,6 +28,14 @@ const UserSchema = new Schema({
  password:{
   type:String,
   require:true
+ },
+ verificationCode:{
+    type:String,
+    default:''
+ },
+ verificationExpiry:{
+    type:Date,
+    default:null
  }
 })
 

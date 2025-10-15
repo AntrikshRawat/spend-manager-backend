@@ -1,10 +1,11 @@
 const express = require("express");
 const User = require("../Models/User");
 const bcrypt = require("bcryptjs");
+const verifyUser = require("../Middleware/verifyUser");
 
 const Router = express.Router();
 
-Router.post("/", async (req, res) => {
+Router.post("/",verifyUser, async (req, res) => {
   const { oldPassword, newPassword } = req.body;
 
   try {
@@ -17,9 +18,8 @@ Router.post("/", async (req, res) => {
   }
   const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
 
-  
   if (!isPasswordMatch) {
-    res.status(422).json({ message: "Invalid old password!" });
+    res.status(422).json({ message: "Old Password Does Not Match!" });
     return;
   }
 
@@ -33,6 +33,7 @@ Router.post("/", async (req, res) => {
     );
     return res.status(200).json({status:false,message:"Password Updated Successfully!"});
   } catch (er) {
+    console.log("error while updating password:",err);
     return res
       .status(500)
       .json({ status: false, message: "Internal Server Error!" });
