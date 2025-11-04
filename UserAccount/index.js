@@ -10,6 +10,6 @@ const forgotPassword = require("./forgotPassword");
 Router.use("/forgotpassword",forgotPassword);
 
 const notification = require("./notification");
-Router.use("/subscribe",notification);
+Router.use("/subscribe",verifyUser,notification);
 
 module.exports = Router;

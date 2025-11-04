@@ -1,10 +1,9 @@
 const express = require("express");
 const User = require("../Models/User");
-const verifyUser = require("../Middleware/verifyUser");
 
 const Router = express.Router();
 
-Router.post("/", verifyUser, async (req, res) => {
+Router.post("/", async (req, res) => {
   const { subscription } = req.body;
   const userId = req.userId;
   try {

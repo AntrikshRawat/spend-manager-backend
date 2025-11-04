@@ -10,6 +10,7 @@ const accountVerification = require("../Middleware/accountVerification");
 const Payment = require("../Models/Payment");
 
 const Router = express.Router();
+
 Router.use(verifyUser);
 
 Router.get("/",accountVerification,async(req,res)=>{

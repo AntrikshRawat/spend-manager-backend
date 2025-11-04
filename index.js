@@ -17,8 +17,10 @@ require('dotenv').config();
 const app = express();
 const server = http.createServer(app);
 
+const cloud_host_origin = process.env.CLOUD_HOST;
+
 app.use(cors({
-  origin: ["https://spend-manager-f.vercel.app","http://localhost:5173"], 
+  origin: [cloud_host_origin], 
   credentials: true       
 }));
 app.use(express.json()); // For parsing application/json
@@ -39,7 +41,7 @@ connectToDB().then(() => {
 });
 
 webpush.setVapidDetails(
-  "mailto:antrikshrawat2@gmail.com",
+  `mailto:${process.env.USER_EMAIL}`,
   process.env.WEB_PUSH_PUBLIC_KEY,
   process.env.WEB_PUSH_PRIVATE_KEY
 );

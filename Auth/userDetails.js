@@ -6,10 +6,9 @@
 
 
 const express = require('express');
-const verifyUser = require('../Middleware/verifyUser');
 const User = require('../Models/User');
 const router = express.Router();
-router.get("/",verifyUser,async(req,res)=>{
+router.get("/",async(req,res)=>{
  try{
   const userId = req.userId;
   const user = await User.findById(userId).select("firstName lastName userName email").exec();

@@ -36,7 +36,7 @@ Router.post("/", async (req, res) => {
       httpOnly: true,
       sameSite: 'none',     
       secure: true,        
-      maxAge:rememberMe ? 24*60*60*1000 : 30*24*60*60*1000 // 1day or 30 day
+      maxAge:rememberMe ? 30*24*60*60*1000 : 24*60*60*1000 // 30 day or 1 day
     });
 
     return res.json({ message: "Login Successful",authToken });

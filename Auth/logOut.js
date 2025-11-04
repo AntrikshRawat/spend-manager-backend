@@ -6,10 +6,9 @@
 
 const express = require("express");
 const Router = express.Router();
-const verifyUser = require("../Middleware/verifyUser");
 const User = require("../Models/User");
 
-Router.post("/", verifyUser, async (req, res) => {
+Router.post("/", async (req, res) => {
   const userId = req.userId;
   try {
     await User.findByIdAndUpdate(
