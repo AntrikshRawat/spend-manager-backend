@@ -25,7 +25,7 @@ Router.post("/", async (req, res) => {
   }
 });
 
-Router.delete("/", verifyUser, async (req, res) => {
+Router.delete("/", async (req, res) => {
   const userId = req.userId;
   try {
     const user = await User.findByIdAndUpdate(userId, {
