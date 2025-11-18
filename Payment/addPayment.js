@@ -10,7 +10,8 @@ const Router = express.Router();
 Router.post(
   "/",
   [
-    body("where", "Please add a place where you spent!").isLength({ min: 3 }),
+    body("where","Please add a place where you spend!").notEmpty(),
+    body("where", "Add the minimum length of 3 for place(where)!").isLength({ min: 3 }),
     body("amount", "Amount should be greater than 0!").isFloat({ gt: 0 }),
     body("paidBy", "Who paid for this Payment?").notEmpty(),
   ],
