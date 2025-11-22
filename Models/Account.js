@@ -12,6 +12,11 @@ const AccountSchema = new Schema({
   ref:'user',
   require:true
  },
+ accountType:{
+  type:String,
+  require:true,
+  enum:["shared","personal"]
+ },
  accountMembers:{
   type:Array,
   require:true

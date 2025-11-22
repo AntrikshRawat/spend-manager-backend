@@ -24,13 +24,14 @@ Router.delete("/",async(req,res)=>{
   const {userName} = await User.findById(uId).select("userName");
 
   const message = `${userName} deleted the ${deleted.accountName} account.`
+  if(deleted.accountType === "shared") {
    await createNotification(
       userName,
       message,
       null,
       deleted.accountMembers.filter((mem)=>mem!==uId),
       "account"
-    );
+    )};
     return res.json({message:"Account Deleted Succesfully."});;
  }catch(e) {
   res.status(500).json({message:"Internal Application Error"});

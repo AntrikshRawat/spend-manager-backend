@@ -16,6 +16,7 @@ const Router = express.Router();
 
 Router.post("/",[
  body('acName',"Account Name Should be At least 4 Charater!").isLength({min:4}),
+ body('accountType',"Account Type Can Not Be Empty!").notEmpty(),
 ],async(req,res)=>{
  try {
    const errors = validationResult(req);
@@ -24,22 +25,24 @@ Router.post("/",[
    }
 
   const uId = req.userId;
-  const {acName,acMembers} = req.body;
+  const {acName,acMembers,accountType} = req.body;
   const account = await Account.create({
    accountName:acName,
+   accountType,
    accountHolder:uId,
-   accountMembers:[...acMembers,uId]
+   accountMembers:accountType==="shared"?[...acMembers,uId]:[uId]
   });
 
   const {userName} = await User.findById(uId).select("userName");
   const message = `${userName} added you to a new account(${account.accountName})`
+  if(accountType === "shared") {
   await createNotification(
     userName,
     message,
     account._id,
-    acMembers,
+    acMembers.filter((mem)=>mem!==uId),
     "account"
-  );
+  )};
   return res.json({message:"Account Created Successfully"});
  }catch(e) {
    res.status(500).json({message:"Internal Application Error"});

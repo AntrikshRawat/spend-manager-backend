@@ -15,29 +15,28 @@ Router.put("/", async (req, res) => {
       return res.status(400).json({ message: "accountId is required" });
     }
 
-    const account = await Account.findById(accountId).select("accountMembers accountName accountHolder");
+    const account = await Account.findById(accountId).select("accountMembers accountName accountHolder accountType");
     if (!account) {
       return res.status(404).json({ message: "Account not found!" });
     }
 
     const uId = req.userId;
-    const { accountMembers, accountName, accountHolder } = account;
-
-    const user = await User.findById(accountHolder).select("userName");
-    const userName = user?.userName || "An account member";
-
-    const message = `${userName} cleared all the transactions from ${accountName} account.`;
+    const { accountMembers, accountName, accountHolder,accountType } = account;
 
     await clrAccount(accountId);
     await Payment.deleteMany({ accountId });
 
+    if(accountType === "shared") {
+    const user = await User.findById(accountHolder).select("userName");
+    const userName = user?.userName || "An account member";
+    const message = `${userName} cleared all the transactions from ${accountName} account.`;
     await createNotification(
       userName,
       message,
       accountId,
       accountMembers.filter((member) => member !== uId),
       "payment"
-    );
+    )};
 
     return res.status(200).json({ message: "Account reset successfully." });
   } catch (e) {

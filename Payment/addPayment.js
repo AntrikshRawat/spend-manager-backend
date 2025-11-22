@@ -10,8 +10,10 @@ const Router = express.Router();
 Router.post(
   "/",
   [
-    body("where","Please add a place where you spend!").notEmpty(),
-    body("where", "Add the minimum length of 3 for place(where)!").isLength({ min: 3 }),
+    body("where", "Please add a place where you spend!").notEmpty(),
+    body("where", "Add the minimum length of 3 for place(where)!").isLength({
+      min: 3,
+    }),
     body("amount", "Amount should be greater than 0!").isFloat({ gt: 0 }),
     body("paidBy", "Who paid for this Payment?").notEmpty(),
   ],
@@ -29,30 +31,30 @@ Router.post(
         return res.status(400).json({ message: "Account ID is required" });
 
       if (
-        !Array.isArray(memberExpenses) ||
-        memberExpenses.length === 0
+        (!Array.isArray(memberExpenses) || memberExpenses.length === 0) &&
+        accountType === "shared"
       ) {
         return res.status(400).json({
-          message: "Member expenses are required and should be a non-empty array",
+          message:
+            "Member expenses are required and should be a non-empty array",
         });
       }
 
       const account = await Account.findById(accountId).select(
-        "accountMembers accountName"
+        "accountMembers accountName accountType"
       );
 
       if (!account) {
         return res.status(404).json({ message: "Account not found" });
       }
 
-      const { accountMembers, accountName } = account;
-
+      
       const updated = await inrAccount(accountId, amount);
-
+      
       if (!updated) {
         return res
-          .status(400)
-          .json({ message: "Could not update account totals" });
+        .status(400)
+        .json({ message: "Could not update account totals" });
       }
 
       await Payment.create({
@@ -62,17 +64,21 @@ Router.post(
         amount,
         memberExpenses,
       });
-      const message = `${paidBy} added a new transaction of ₹${amount} in ${accountName} account.`;
 
-      await createNotification(
-        paidBy,
-        message,
-        accountId,
-        accountMembers.filter((member) => member !== uId),
-        "payment"
-      );
-
-      return res.status(201).json({ message: "Transaction added successfully!" });
+      const { accountMembers, accountName, accountType } = account;
+      if (accountType === "shared") {
+        const message = `${paidBy} added a new transaction of ₹${amount} in ${accountName} account.`;
+        await createNotification(
+          paidBy,
+          message,
+          accountId,
+          accountMembers.filter((member) => member !== uId),
+          "payment"
+        );
+      }
+      return res
+        .status(201)
+        .json({ message: "Transaction added successfully!" });
     } catch (e) {
       console.error("Error in /payment/add:", e);
       res.status(500).json({ message: "Internal Server Error" });
