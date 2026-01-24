@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const connectToDB = require('./config/database');
 const auth = require("./Auth");
@@ -9,10 +10,8 @@ const http = require("http");
 const socket = require("./socket");
 const verifyUser = require('./Middleware/verifyUser');
 const Notification = require('./Models/Notification');
-const gemini = require("./Gemini");
 const userAccount = require("./UserAccount");
 const webpush = require("web-push");
-require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -66,5 +65,4 @@ app.get("/notifications",verifyUser,async(req,res)=>{
 app.use("/auth/v1",auth);
 app.use("/account",account);
 app.use("/payment",payment);
-app.use("/accountsummary",gemini);
 app.use("/userAccount",userAccount);

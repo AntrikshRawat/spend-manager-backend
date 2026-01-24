@@ -15,4 +15,7 @@ Router.use("/subscribe",verifyUser,notification);
 const settlement = require("./settlement");
 Router.use("/settlement",verifyUser,settlement);
 
+const summery = require("./aiSummery");
+Router.use("/accountsummery",verifyUser,summery);
+
 module.exports = Router;
