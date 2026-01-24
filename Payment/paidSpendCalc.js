@@ -1,6 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 const Payment = require("../Models/Payment"); // Your Payment model
+const paidSpendCalculator = require("../Middleware/paidSpendCalculator");
 
 Router.post("/", async (req, res) => {
   try {
@@ -8,40 +9,17 @@ Router.post("/", async (req, res) => {
     const { accountId } = req.query;
 
     if (!accountId || !Array.isArray(accountMembers)) {
-      return res.status(400).json({  message: "Invalid input!" });
+      return res.status(400).json({ message: "Invalid input!" });
     }
 
     // Fetch all transactions of the account
     const transactions = await Payment.find({ accountId });
 
     // Initialize paid and expense trackers
-    const paidSummary = {};
-    const expenseSummary = {};
-
-    accountMembers.forEach((member) => {
-      paidSummary[member] = 0;
-      expenseSummary[member] = 0;
-    });
-
-    // Loop through transactions
-    transactions.forEach((txn) => {
-      const { paidBy, amount, memberExpenses } = txn;
-
-      // Update paid summary
-      if (paidSummary.hasOwnProperty(paidBy)) {
-        paidSummary[paidBy] += amount;
-      }
-
-      // Update expense summary
-      if (Array.isArray(memberExpenses)) {
-        memberExpenses.forEach((expense, index) => {
-          const member = accountMembers[index];
-          if (member) {
-            expenseSummary[member] += Number(expense);
-          }
-        });
-      }
-    });
+    const { paidSummary, expenseSummary } = paidSpendCalculator(
+      accountMembers,
+      transactions,
+    );
 
     res.json({
       paidSummary,
@@ -49,7 +27,7 @@ Router.post("/", async (req, res) => {
     });
   } catch (err) {
     console.error("Error in spend summary route:", err);
-    res.status(500).json({  message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

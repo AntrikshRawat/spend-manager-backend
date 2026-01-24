@@ -30,7 +30,7 @@ ${JSON.stringify(paymentRecords, null, 2)}
 \`\`\`
 `;
 
-  const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+  const model = genAI.getGenerativeModel({ model: "gemini-3-pro-preview" });
 
   const {response} = await model.generateContent(fullPrompt);
   return response.text();

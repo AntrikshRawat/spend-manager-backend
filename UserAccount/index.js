@@ -12,4 +12,7 @@ Router.use("/forgotpassword",forgotPassword);
 const notification = require("./notification");
 Router.use("/subscribe",verifyUser,notification);
 
+const settlement = require("./settlement");
+Router.use("/settlement",verifyUser,settlement);
+
 module.exports = Router;
