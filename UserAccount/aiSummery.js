@@ -15,33 +15,55 @@ const groq = new Groq({
 });
 
 async function aiResponse(membersName, accountInfo, paymentRecords) {
-  const defaultPrompt = `
-You are an expert financial analyst. I am providing you with three datasets:
+  const defaultPrompt = `You are an expert financial analyst. I am providing you with three datasets:
+
 1. **Account Info**: Metadata about the group.
+
 2. **Member Mapping**: A reference list linking User IDs to Real Names.
+
 3. **Payment Records**: A list of transactions containing amounts and payer IDs.
 
+
+
 **Your Goal:**
+
 Analyze this data and generate a professional financial settlement report.
 
+
+
 **Critical Formatting Rules:**
+
 * **STRICTLY NO TABLES:** Do not use Markdown tables or grid formats for any section.
+
 * **Bullet Points Only:** Present all data, statistics, and breakdowns using clear bullet points or numbered lists.
+
 * **Resolve Names:** Replace every User ID with the corresponding "Real Name" from the Member Mapping. Do not use raw database IDs.
+
 * **Currency:** All monetary values must be in Indian Rupees (₹).
 
+
+
 **Report Structure:**
+
 1.  **Header:** The Group Name (formatted as a large bold heading).
+
 2.  **Executive Summary:** A brief overview of total group spending and total transaction count (presented as a list).
+
 3.  **Member Analysis:** Create a distinct section for *each* member containing a bulleted breakdown of:
+
     * **Total Paid:** total amount they paid(get from every transactions payBy attribute).
+
     * **Total Spend:** total amount they spend(get from the share in each transaction and total it.).
+
     * **Net Balance:** (Paid - spend). Label this clearly as "Overpaid" (To Receive) or "Underpaid" (To Pay).
+
 4.  **Settlement Plan:** A clear, step-by-step list of transfers required to balance the books (e.g., "• Alice pays Bob ₹500" and highlight the usernames).
 
+
+
 **Tone:**
-Professional, objective, and authoritative. Do not include introductory text like "Here is your analysis." Start directly with the Report Header.
-`;
+
+Professional, objective, and authoritative. Do not include introductory text like "Here is your analysis." Start directly with the Report Header.`;
 
   const fullPrompt = `${defaultPrompt}
 
@@ -88,23 +110,32 @@ router.post("/", async (req, res) => {
     const { accountId } = req.body;
 
     // 👇 Use .lean() to get plain JSON objects instead of heavy Mongoose docs
-    const account = await Account.findById(accountId).lean();
-    const Payments = await Payment.find({ accountId }).lean();
+    const account = await Account.findById(accountId);
+    const Payments = await Payment.find({ accountId });
 
     if (!account || Payments.length === 0) {
       return res.status(404).json({ message: "No data found." });
     }
 
-    // Helper: Map User IDs to Names
-    // Note: account.accountMembers might be objects or strings depending on your schema.
-    // .lean() makes them whatever is in the DB (usually ObjectIds).
-    const userIds = account.accountMembers.map((id) => id.toString());
+   const userIds = account.accountMembers.map((id) => id.toString());
 
-    const users = await User.find({ _id: { $in: userIds } }).lean();
+    // 1. Fetch users (Database returns these in random/insertion order)
+    const users = await User.find({ _id: { $in: userIds } });
 
-    const nameMap = {};
+    // 2. Create a temporary lookup object (Order doesn't matter here)
+    const userLookup = {};
     users.forEach((user) => {
-      nameMap[user._id.toString()] = user.userName;
+        userLookup[user._id.toString()] = user.userName;
+    });
+
+    // 3. Build the final nameMap using accountMembers to enforce the specific order
+    const nameMap = {};
+    account.accountMembers.forEach((memberId) => {
+        const idStr = memberId.toString();
+        // Check if user was found to avoid crashes
+        if (userLookup[idStr]) {
+            nameMap[idStr] = userLookup[idStr];
+        }
     });
 
     // Generate the summary
