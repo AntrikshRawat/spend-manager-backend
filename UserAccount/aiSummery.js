@@ -34,10 +34,10 @@ Analyze this data and generate a professional financial settlement report.
 1.  **Header:** The Group Name (formatted as a large bold heading).
 2.  **Executive Summary:** A brief overview of total group spending and total transaction count (presented as a list).
 3.  **Member Analysis:** Create a distinct section for *each* member containing a bulleted breakdown of:
-    * **Total Contributed:** How much they actually paid.
-    * **Fair Share:** How much they actually spend.
-    * **Net Position:** (Paid - spend). Label this clearly as "Overpaid" (To Receive) or "Underpaid" (To Pay).
-4.  **Settlement Plan:** A clear, step-by-step list of transfers required to balance the books (e.g., "• Alice pays Bob ₹500" and highlight the both username in last settlement plan only).
+    * **Total Paid:** total amount they paid(get from every transactions payBy attribute).
+    * **Total Spend:** total amount they spend(get from the share in each transaction and total it.).
+    * **Net Balance:** (Paid - spend). Label this clearly as "Overpaid" (To Receive) or "Underpaid" (To Pay).
+4.  **Settlement Plan:** A clear, step-by-step list of transfers required to balance the books (e.g., "• Alice pays Bob ₹500" and highlight the usernames).
 
 **Tone:**
 Professional, objective, and authoritative. Do not include introductory text like "Here is your analysis." Start directly with the Report Header.
