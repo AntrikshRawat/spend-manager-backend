@@ -4,6 +4,7 @@ const Account = require("../Models/Account");
 const Payment = require("../Models/Payment");
 const User = require("../Models/User");
 const Groq = require("groq-sdk");
+const { promtForSharedAccounts, promtForPersonalAccounts } = require("../config/promt");
 
 // Ensure API Key is loaded
 if (!process.env.GROQ_API) {
@@ -14,58 +15,8 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API, // Explicitly passing it is good practice
 });
 
-async function aiResponse(membersName, accountInfo, paymentRecords) {
-  const defaultPrompt = `You are an expert financial analyst. I am providing you with three datasets:
-
-1. **Account Info**: Metadata about the group.
-
-2. **Member Mapping**: A reference list linking User IDs to Real Names.
-
-3. **Payment Records**: A list of transactions containing amounts and payer IDs.
-
-
-
-**Your Goal:**
-
-Analyze this data and generate a professional financial settlement report.
-
-
-
-**Critical Formatting Rules:**
-
-* **STRICTLY NO TABLES:** Do not use Markdown tables or grid formats for any section.
-
-* **Bullet Points Only:** Present all data, statistics, and breakdowns using clear bullet points or numbered lists.
-
-* **Resolve Names:** Replace every User ID with the corresponding "Real Name" from the Member Mapping. Do not use raw database IDs.
-
-* **Currency:** All monetary values must be in Indian Rupees (₹).
-
-
-
-**Report Structure:**
-
-1.  **Header:** The Group Name (formatted as a large bold heading).
-
-2.  **Executive Summary:** A brief overview of total group spending and total transaction count (presented as a list).
-
-3.  **Member Analysis:** Create a distinct section for *each* member containing a bulleted breakdown of:
-
-    * **Total Paid:** total amount they paid(get from every transactions payBy attribute).
-
-    * **Total Spend:** total amount they spend(get from the share in each transaction and total it.).
-
-    * **Net Balance:** (Paid - spend). Label this clearly as "Overpaid" (To Receive) or "Underpaid" (To Pay).
-
-4.  **Settlement Plan:** A clear, step-by-step list of transfers required to balance the books (e.g., "• Alice pays Bob ₹500" and highlight the usernames).
-
-
-
-**Tone:**
-
-Professional, objective, and authoritative. Do not include introductory text like "Here is your analysis." Start directly with the Report Header.`;
-
-  const fullPrompt = `${defaultPrompt}
+async function aiResponse(accountType,membersName, accountInfo, paymentRecords) {
+  const fullPrompt = `${accountType=="shared"?promtForSharedAccounts:promtForPersonalAccounts}
 
 Main Account Info:
 \`\`\`json
@@ -108,8 +59,6 @@ ${JSON.stringify(paymentRecords, null, 2)}
 router.post("/", async (req, res) => {
   try {
     const { accountId } = req.body;
-
-    // 👇 Use .lean() to get plain JSON objects instead of heavy Mongoose docs
     const account = await Account.findById(accountId);
     const Payments = await Payment.find({ accountId });
 
@@ -117,6 +66,7 @@ router.post("/", async (req, res) => {
       return res.status(404).json({ message: "No data found." });
     }
 
+   const accountType = account.accountType;
    const userIds = account.accountMembers.map((id) => id.toString());
 
     // 1. Fetch users (Database returns these in random/insertion order)
@@ -139,7 +89,7 @@ router.post("/", async (req, res) => {
     });
 
     // Generate the summary
-    const summary = await aiResponse(nameMap, account, Payments);
+    const summary = await aiResponse(accountType,nameMap, account, Payments);
 
     res.json({ summary });
   } catch (error) {
