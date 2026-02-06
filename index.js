@@ -19,7 +19,17 @@ const server = http.createServer(app);
 const cloud_host_origin = process.env.CLOUD_HOST;
 
 app.use(cors({
-  origin: [cloud_host_origin], 
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    // (Optional) Add your web frontend URLs here if you have one
+    if ([cloud_host_origin].indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  }, 
   credentials: true       
 }));
 app.use(express.json()); // For parsing application/json

@@ -1,5 +1,5 @@
 
-// /auth/usernames
+// /auth/v1/usernames
 
 
 const express = require('express');
@@ -10,7 +10,7 @@ Router.post('/', async (req, res) => {
   try {
     const { userIds } = req.body;
     const users = await Promise.all(userIds.map(id => User.findById(id)));
-    const userNames = users.filter(Boolean).map(user => user.userName); // skip nulls
+    const userNames = users.filter(Boolean).map(user => user.userName); 
     res.json(userNames);
   } catch (error) {
     console.error('Error finding users:', error);
