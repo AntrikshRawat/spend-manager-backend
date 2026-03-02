@@ -13,9 +13,11 @@ const logout = require("./logOut");
 const filter = require("./filteruser");
 const usernames = require("./getUserNames");
 const verifyUser = require('../Middleware/verifyUser');
+const googleAuth = require("./googleAuth");
 
 Router.use("/register",register);
 Router.use("/login",login);
+Router.use("/google",googleAuth);
 Router.use("/userInfo",verifyUser,userDetails);
 Router.use("/logout",verifyUser,logout);
 Router.use("/filter",verifyUser,filter);
