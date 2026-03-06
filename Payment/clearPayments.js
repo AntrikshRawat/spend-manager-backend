@@ -3,6 +3,7 @@ const { clrAccount } = require("../Middleware/updateaccount");
 const Payment = require("../Models/Payment");
 const Account = require("../Models/Account");
 const createNotification = require("../Middleware/createNotification");
+const { deletedData } = require("../Middleware/deletedData");
 const User = require("../Models/User");
 
 const Router = express.Router();
@@ -22,6 +23,8 @@ Router.put("/", async (req, res) => {
 
     const uId = req.userId;
     const { accountMembers, accountName, accountHolder,accountType } = account;
+
+    await deletedData(accountId, "clear all transactions");
 
     await clrAccount(accountId);
     await Payment.deleteMany({ accountId });

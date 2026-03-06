@@ -8,12 +8,14 @@ const express = require("express");
 const Account = require("../Models/Account");
 const Payment = require("../Models/Payment");
 const createNotification = require("../Middleware/createNotification");
+const { deletedData } = require("../Middleware/deletedData");
 const User = require("../Models/User");
 const Router = express.Router();
 
 Router.delete("/",async(req,res)=>{
  try{
   const {accountId} = req.body;
+   await deletedData(accountId, "delete account");
   const deleted = await Account.findByIdAndDelete(accountId);
   if(!deleted) {
    return res.status(404).json({message:"No Matching Account Found!"});
