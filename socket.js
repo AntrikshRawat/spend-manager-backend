@@ -1,11 +1,12 @@
+const { Server } = require('socket.io');
+const CLOUD_HOST = process.env.CLOUD_HOST;
 let io = null;
 
 module.exports = {
   init: (server) => {
-    const { Server } = require('socket.io');
     io = new Server(server, {
       cors: {
-        origin: ["https://spend-manager-f.vercel.app","http://localhost:5173"],
+        origin: CLOUD_HOST,
         credentials: true
       }
     });

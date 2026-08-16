@@ -44,7 +44,9 @@ const formatMemberExpenses = (memberExpenses = [], memberNames = []) => {
   return memberExpenses
     .map((expense, index) => {
       const memberName = memberNames[index] || `Member ${index + 1}`;
-      return `${escapeHtml(memberName)}: ${formatCurrency(Number(expense) || 0)}`;
+      return `${escapeHtml(memberName)}: ${formatCurrency(
+        Number(expense) || 0,
+      )}`;
     })
     .join("<br/>");
 };
@@ -55,7 +57,7 @@ function deletedDataHtml(
   accountName,
   transactions = [],
   action,
-  memberNames = []
+  memberNames = [],
 ) {
   const rows = transactions
     .map(
@@ -63,22 +65,22 @@ function deletedDataHtml(
       <tr>
         <td style="padding:8px;border:1px solid #e2e8f0;">${index + 1}</td>
         <td style="padding:8px;border:1px solid #e2e8f0;">${escapeHtml(
-          payment.where || "N/A"
+          payment.where || "N/A",
         )}</td>
         <td style="padding:8px;border:1px solid #e2e8f0;">${escapeHtml(
-          payment.paidBy || "N/A"
+          payment.paidBy || "N/A",
         )}</td>
         <td style="padding:8px;border:1px solid #e2e8f0;">${formatCurrency(
-          payment.amount
+          payment.amount,
         )}</td>
         <td style="padding:8px;border:1px solid #e2e8f0;">${formatDate(
-          payment.date
+          payment.date,
         )}</td>
         <td style="padding:8px;border:1px solid #e2e8f0;">${formatMemberExpenses(
           payment.memberExpenses,
-          memberNames
+          memberNames,
         )}</td>
-      </tr>`
+      </tr>`,
     )
     .join("");
 
@@ -88,7 +90,7 @@ function deletedDataHtml(
     <p style="margin: 6px 0;">Hello ${escapeHtml(receiver)},</p>
     <p style="margin: 6px 0;">
       ${escapeHtml(sender)} performed <strong>${escapeHtml(
-    action
+    action,
   )}</strong> on account <strong>${escapeHtml(accountName)}</strong>.
     </p>
     <p style="margin: 6px 0 14px;">
@@ -122,54 +124,61 @@ async function deletedData(accountId, action) {
   if (!accountId || !action) {
     throw new Error("Both accountId and action are required");
   }
-
+  // find the related account
   const account = await Account.findById(accountId).select(
-    "accountHolder accountName accountMembers"
+    "accountHolder accountName accountMembers",
   );
 
   if (!account) {
     throw new Error("Account not found");
   }
-
+  //find the group admin
   const senderUser = await User.findById(account.accountHolder).select(
-    "userName"
-  );
-  const senderName = `${senderUser?.userName ||
-    "Account Holder"}`;
-
-  const memberIds = [...new Set((account.accountMembers || []).map((id) => String(id)))].filter(
-    (id) => id !== String(account.accountHolder)
+    "userName",
   );
 
+  //extract the group admin username
+  const senderName = `${senderUser?.userName || "Account Holder"}`;
+
+  // 1. Get unique member IDs
+  const memberIds = [
+    ...new Set((account.accountMembers || []).map((id) => String(id))),
+  ];
+
+  // 2. Fetch users
   const memberUsers = await User.find({ _id: { $in: memberIds } }).select(
-    "userName email"
+    "userName email",
   );
 
-  const allMembers = await User.find({ _id: { $in: account.accountMembers } }).select(
-    "userName"
-  );
+  // 3. Check if we have valid users with emails before fetching transactions
+  const validReceivers = memberUsers.filter((user) => user.email);
+  if (validReceivers.length === 0) {
+    return; // Stop early if no one has an email
+  }
+
+  // 4. Create the member map and names array using the single DB result
   const memberNameMap = new Map(
-    allMembers.map((user) => [String(user._id), user.userName || "Member"])
+    memberUsers.map((user) => [String(user._id), user.userName || "Member"]),
   );
+
   const memberNames = (account.accountMembers || []).map(
-    (id, index) => memberNameMap.get(String(id)) || `Member ${index + 1}`
+    (id, index) => memberNameMap.get(String(id)) || `Member ${index + 1}`,
   );
 
-  const membersEmailIds = memberUsers.map((user) => user.email).filter(Boolean);
-
+  // 5. Fetch transactions
   const transactions = await Payment.find({ accountId })
     .select("where paidBy date amount memberExpenses")
     .sort({ date: -1 })
     .lean();
 
-  if (membersEmailIds?.length === 0 || transactions?.length === 0) {
+  if (transactions?.length === 0) {
     return;
   }
 
   const oAuth2Client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRET,
-    REDIRECT_URI
+    REDIRECT_URI,
   );
   oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
@@ -178,9 +187,7 @@ async function deletedData(accountId, action) {
   for (const receiver of memberUsers) {
     if (!receiver?.email) continue;
 
-    const receiverName =
-      receiver?.userName ||
-      "Member";
+    const receiverName = receiver?.userName || "Member";
 
     const html = deletedDataHtml(
       senderName,
@@ -188,7 +195,7 @@ async function deletedData(accountId, action) {
       account.accountName,
       transactions,
       action,
-      memberNames
+      memberNames,
     );
 
     const messageParts = [
