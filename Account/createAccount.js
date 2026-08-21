@@ -40,7 +40,7 @@ Router.post("/",[
     userName,
     message,
     account._id,
-    acMembers.filter((mem)=>mem!==uId),
+    acMembers.filter((mem)=>String(mem)!==uId),
     "account"
   )};
   return res.json({message:"Account Created Successfully"});

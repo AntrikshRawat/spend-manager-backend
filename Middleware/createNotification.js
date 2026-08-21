@@ -8,7 +8,7 @@ async function createNotification(
   message,
   relatedAccount,
   acMembers = [],
-  type
+  type,
 ) {
   const newNote = await Notification.create({
     from,
@@ -25,7 +25,7 @@ async function createNotification(
     io.to(memberId).emit(`${type}-update`); // "account-update" or "payment-update"
     io.to(memberId).emit(`${type}-notification`, newNote);
 
-    // ---- B) Push notification ----
+    // ---- B) Push notification ---
     const user = await User.findById(memberId);
     if (user?.pushSubscription) {
       try {
@@ -37,10 +37,10 @@ async function createNotification(
                 ? "Account Notification"
                 : "Payment Notification",
             body: message,
-            url:
-              relatedAccount?`/my-accounts/${relatedAccount}`
-                : "/my-accounts",
-          })
+            url: relatedAccount
+              ? `/my-accounts/${relatedAccount}`
+              : "/my-accounts",
+          }),
         );
       } catch (err) {
         console.error("Push failed for", memberId, err.statusCode || err);
