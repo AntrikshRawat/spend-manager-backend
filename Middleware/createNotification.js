@@ -8,7 +8,7 @@ async function createNotification(
   message,
   relatedAccount,
   acMembers = [],
-  type,
+  type = "A",
 ) {
   const newNote = await Notification.create({
     from,
@@ -22,7 +22,9 @@ async function createNotification(
   // 2. Loop through all members
   for (const memberId of acMembers) {
     // ---- A) Socket emit ----
-    io.to(memberId).emit(`${type}-update`); // "account-update" or "payment-update"
+    if(type !== "reminder") {
+      io.to(memberId).emit(`${type}-update`);
+    }
     io.to(memberId).emit(`${type}-notification`, newNote);
 
     // ---- B) Push notification ---
@@ -32,10 +34,7 @@ async function createNotification(
         await webpush.sendNotification(
           user.pushSubscription,
           JSON.stringify({
-            title:
-              type === "account"
-                ? "Account Notification"
-                : "Payment Notification",
+            title:`${type[0].toUpperCase() + type.slice(1)} Notification`,
             body: message,
             url: relatedAccount
               ? `/my-accounts/${relatedAccount}`

@@ -23,5 +23,8 @@ Router.use("/delete",verifyUser,deleteAccount);
 const accountDetails = require("./accountDetails");
 Router.use("/details",verifyUser,accountDetails);
 
+const remindGroup = require("./remindGroup");
+Router.use("/reminder",verifyUser,remindGroup);
+
 module.exports = Router;
 
