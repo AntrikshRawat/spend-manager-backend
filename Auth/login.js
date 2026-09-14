@@ -18,13 +18,13 @@ Router.post("/", async (req, res) => {
     // Determine if input is an email or username
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userName);
 
-    if(isEmail) {
-      userName =  (userName || "").toString().toLowerCase();
-    }
+    const normalizedUserName = isEmail ? userName.toLowerCase() : userName;
 
-    const user = await User.findOne(isEmail ? { email: userName } : { userName: userName });
+    const user = await User.findOne(
+      isEmail ? { email: normalizedUserName } : { userName: normalizedUserName },
+    );
 
-    if (!user) {  
+    if (!user) {
       return res.status(401).json({ message: "Incorrect Credentials" });
     }
 
@@ -37,13 +37,12 @@ Router.post("/", async (req, res) => {
 
     res.cookie("authToken", authToken, {
       httpOnly: true,
-      sameSite: 'none',     
-      secure: true,        
-      maxAge:rememberMe ? 30*24*60*60*1000 : 24*60*60*1000 // 30 day or 1 day
+      sameSite: "none",
+      secure: true,
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000, // 30 day or 1 day
     });
 
-    return res.json({ message: "Login Successful",authToken });
-
+    return res.json({ message: "Login Successful", authToken });
   } catch (e) {
     res.status(500).json({ message: "Internal Application Error" });
   }
