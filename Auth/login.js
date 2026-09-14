@@ -18,6 +18,10 @@ Router.post("/", async (req, res) => {
     // Determine if input is an email or username
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userName);
 
+    if(isEmail) {
+      userName =  (userName || "").toString().toLowerCase();
+    }
+
     const user = await User.findOne(isEmail ? { email: userName } : { userName: userName });
 
     if (!user) {  
