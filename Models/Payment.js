@@ -26,6 +26,11 @@ const PaymentSchema = new Schema({
  memberExpenses:{
   type:Array,
   require:true
+ },
+ paymentType:{
+  type:String,
+  require:true,
+  enum:["Group","Income","Expense","Due Payment"]
  }
 });
 

@@ -6,14 +6,25 @@ const paidSpendCalculator = require("../Middleware/paidSpendCalculator");
 Router.post("/", async (req, res) => {
   try {
     const { accountMembers } = req.body;
-    const { accountId } = req.query;
+    const { accountId, month } = req.query;
 
     if (!accountId || !Array.isArray(accountMembers)) {
       return res.status(400).json({ message: "Invalid input!" });
     }
 
-    // Fetch all transactions of the account
-    const transactions = await Payment.find({ accountId });
+    const query = { accountId };
+
+    if (month) {
+      const [year, mon] = month.split("-").map(Number);
+      if (!year || !mon || mon < 1 || mon > 12) {
+        return res.status(400).json({ message: "Invalid month format. Use YYYY-MM" });
+      }
+      const startDate = new Date(year, mon - 1, 1);
+      const endDate = new Date(year, mon, 1);
+      query.date = { $gte: startDate, $lt: endDate };
+    }
+
+    const transactions = await Payment.find(query);
 
     // Initialize paid and expense trackers
     const { paidSummary, expenseSummary } = paidSpendCalculator(

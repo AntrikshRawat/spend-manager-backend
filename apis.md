@@ -491,13 +491,14 @@ hello and welcome to spend-manager-api!
 
 | | |
 |---|---|
-| **URL** | `GET /payment?accountId=<id>` |
+| **URL** | `GET /payment?accountId=<id>&month=<YYYY-MM>` |
 | **Auth** | ✅ Required |
 
 **Query Params**
 | Param | Type | Description |
 |---|---|---|
 | `accountId` | string | The account ID to fetch payments for |
+| `month` | string | *(Optional)* Filter by month in `YYYY-MM` format (e.g. `2026-11`). Returns only payments from that month. Omit to get all payments. |
 
 **Response `200` — Success**
 ```json
@@ -515,6 +516,11 @@ hello and welcome to spend-manager-api!
     ]
   }
 ]
+```
+
+**Response `400` — Invalid Month Format**
+```json
+{ "message": "Invalid month format. Use YYYY-MM" }
 ```
 
 **Response `500` — Server Error**
@@ -653,13 +659,14 @@ hello and welcome to spend-manager-api!
 
 | | |
 |---|---|
-| **URL** | `POST /payment/paidspend?accountId=<id>` |
+| **URL** | `POST /payment/paidspend?accountId=<id>&month=<YYYY-MM>` |
 | **Auth** | ✅ Required |
 
 **Query Params**
 | Param | Type | Description |
 |---|---|---|
 | `accountId` | string | The account ID |
+| `month` | string | *(Optional)* Filter by month in `YYYY-MM` format (e.g. `2026-11`). Calculates summary for that month only. Omit to use all transactions. |
 
 **Request Body**
 ```json
@@ -685,6 +692,11 @@ hello and welcome to spend-manager-api!
 **Response `400` — Invalid Input**
 ```json
 { "message": "Invalid input!" }
+```
+
+**Response `400` — Invalid Month Format**
+```json
+{ "message": "Invalid month format. Use YYYY-MM" }
 ```
 
 **Response `500` — Server Error**
