@@ -1,4 +1,4 @@
- module.exports = function (accountMembers, transactions) {
+module.exports = function (accountMembers, transactions) {
   const paidSummary = {};
   const expenseSummary = {};
 
@@ -13,15 +13,29 @@
 
     // Update paid summary
     if (paidSummary.hasOwnProperty(paidBy)) {
-      paidSummary[paidBy] += amount;
+      paidSummary[paidBy] += Number(amount || 0);
     }
 
     // Update expense summary
     if (Array.isArray(memberExpenses)) {
       memberExpenses.forEach((expense, index) => {
-        const member = accountMembers[index];
-        if (member) {
-          expenseSummary[member] += Number(expense);
+        const expAmount =
+          typeof expense === "object" && expense !== null
+            ? Number(expense.amount || 0)
+            : Number(expense || 0);
+
+        const expMember =
+          typeof expense === "object" && expense !== null && expense.member
+            ? expense.member
+            : accountMembers[index];
+
+        if (expMember && expenseSummary.hasOwnProperty(expMember)) {
+          expenseSummary[expMember] += expAmount;
+        } else if (
+          accountMembers[index] &&
+          expenseSummary.hasOwnProperty(accountMembers[index])
+        ) {
+          expenseSummary[accountMembers[index]] += expAmount;
         }
       });
     }
@@ -29,6 +43,6 @@
 
   return {
     paidSummary,
-    expenseSummary
+    expenseSummary,
   };
 };

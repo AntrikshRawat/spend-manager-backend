@@ -43,10 +43,15 @@ const formatMemberExpenses = (memberExpenses = [], memberNames = []) => {
 
   return memberExpenses
     .map((expense, index) => {
-      const memberName = memberNames[index] || `Member ${index + 1}`;
-      return `${escapeHtml(memberName)}: ${formatCurrency(
-        Number(expense) || 0,
-      )}`;
+      const expAmount =
+        typeof expense === "object" && expense !== null
+          ? Number(expense.amount || 0)
+          : Number(expense || 0);
+      const memberName =
+        typeof expense === "object" && expense !== null && expense.member
+          ? expense.member
+          : memberNames[index] || `Member ${index + 1}`;
+      return `${escapeHtml(memberName)}: ${formatCurrency(expAmount)}`;
     })
     .join("<br/>");
 };

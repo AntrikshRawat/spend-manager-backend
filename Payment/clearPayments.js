@@ -24,7 +24,11 @@ Router.put("/", async (req, res) => {
     const uId = req.userId;
     const { accountMembers, accountName, accountHolder,accountType } = account;
 
-    await deletedData(accountId, "clear all transactions");
+    try {
+      await deletedData(accountId, "clear all transactions");
+    } catch (mailErr) {
+      console.error("Failed to send deletedData email:", mailErr.message);
+    }
 
     await clrAccount(accountId);
     await Payment.deleteMany({ accountId });

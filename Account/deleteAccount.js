@@ -12,10 +12,18 @@ const { deletedData } = require("../Middleware/deletedData");
 const User = require("../Models/User");
 const Router = express.Router();
 
-Router.delete("/",async(req,res)=>{
- try{
-  const {accountId} = req.body;
-   await deletedData(accountId, "delete account");
+Router.delete("/", async (req, res) => {
+  try {
+    const accountId = req.body?.accountId || req.query?.accountId;
+    if (!accountId) {
+      return res.status(400).json({ message: "accountId is required" });
+    }
+
+    try {
+      await deletedData(accountId, "delete account");
+    } catch (mailErr) {
+      console.error("Failed to send deletedData email:", mailErr.message);
+    }
   const deleted = await Account.findByIdAndDelete(accountId);
   if(!deleted) {
    return res.status(404).json({message:"No Matching Account Found!"});

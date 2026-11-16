@@ -30,7 +30,7 @@ Router.get("/", async (req, res) => {
       .status(200)
       .json({ status: true, msg: "Reminder Sent To Group Members." });
   } catch (err) {
-    console.error("Error Sending Reminder:", e);
+    console.error("Error Sending Reminder:", err);
     res
       .status(500)
       .json({ status: false, message: "Internal Application Error" });
