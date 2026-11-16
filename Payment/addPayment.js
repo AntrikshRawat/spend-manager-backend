@@ -30,16 +30,6 @@ Router.post(
       if (!accountId)
         return res.status(400).json({ message: "Account ID is required" });
 
-      if (
-        (!Array.isArray(memberExpenses) || memberExpenses.length === 0) &&
-        accountType === "shared"
-      ) {
-        return res.status(400).json({
-          message:
-            "Member expenses are required and should be a non-empty array",
-        });
-      }
-
       const account = await Account.findById(accountId).select(
         "accountMembers accountName accountType"
       );
@@ -48,7 +38,30 @@ Router.post(
         return res.status(404).json({ message: "Account not found" });
       }
 
-      
+      const { accountMembers, accountName, accountType } = account;
+
+      if (
+        accountType === "shared" &&
+        (!Array.isArray(memberExpenses) || memberExpenses.length === 0)
+      ) {
+        return res.status(400).json({
+          message:
+            "Member expenses are required and should be a non-empty array",
+        });
+      }
+
+      if (accountType === "shared") {
+        const memberTotal = memberExpenses.reduce(
+          (sum, entry) => sum + Number(entry.amount || 0),
+          0
+        );
+        if (memberTotal !== Number(amount)) {
+          return res.status(400).json({
+            message: `Total of member expenses (₹${memberTotal}) must equal the transaction amount (₹${amount})`,
+          });
+        }
+      }
+
       const updated = await inrAccount(accountId, amount);
       
       if (!updated) {
@@ -65,7 +78,6 @@ Router.post(
         memberExpenses,
       });
 
-      const { accountMembers, accountName, accountType } = account;
       if (accountType === "shared") {
         const message = `${paidBy} added a new transaction of ₹${amount} in ${accountName} account.`;
         await createNotification(
