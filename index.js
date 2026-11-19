@@ -30,8 +30,9 @@ app.use(cookieParser());
 
 connectToDB().then(() => {
   console.log('✅ MongoDB Connected');
-  server.listen(5000, () => {
-    console.log(`🚀 Server running on port ${5000}`);
+  const PORT = process.env.PORT || 5000;
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
   });
   socket.init(server);
 }).catch((err) => {
@@ -56,7 +57,7 @@ app.get("/notifications",verifyUser,async(req,res)=>{
     const allNotifications = await Notification.find({ to: uId }).sort({ timestamp: -1 });
     res.json(allNotifications);
   }catch(err) {
-    res.status(505).json({message:"Internal Server Error!"});
+    res.status(500).json({message:"Internal Server Error!"});
   }
 })
 
